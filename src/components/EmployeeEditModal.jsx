@@ -1,0 +1,294 @@
+import React, { useState, useEffect } from 'react';
+import { X, Save, AlertTriangle, Calendar, Trash2, Edit2, Check, Clock } from 'lucide-react';
+import { format, parseISO, isValid, differenceInCalendarDays, startOfYear, endOfYear, max, min } from 'date-fns';
+
+export default function EmployeeEditModal({ isOpen, onClose, onSave, employee, allEmployees, vacations, onSaveVacation, onDeleteVacation }) {
+    const [name, setName] = useState('');
+    const [role, setRole] = useState('');
+    const [pin, setPin] = useState('');
+    const [incompatibleIds, setIncompatibleIds] = useState([]);
+
+    // Vacation Edit State
+    const [editingVacationId, setEditingVacationId] = useState(null);
+    const [editStartDate, setEditStartDate] = useState('');
+    const [editEndDate, setEditEndDate] = useState('');
+
+    useEffect(() => {
+        if (employee) {
+            setName(employee.name);
+            setRole(employee.role || '');
+            setPin(employee.pin || '');
+            setIncompatibleIds(employee.incompatibleIds || []);
+            setEditingVacationId(null); // Reset on employee change
+        }
+    }, [employee]);
+
+    if (!isOpen || !employee) return null;
+
+    const handleSubmit = (e) => {
+        e.preventDefault();
+        if (!name.trim()) return;
+
+        onSave({
+            ...employee,
+            name,
+            role,
+            pin,
+            incompatibleIds
+        });
+        onClose();
+    };
+
+    const handleToggleIncompatibility = (id) => {
+        if (incompatibleIds.includes(id)) {
+            setIncompatibleIds(incompatibleIds.filter(i => i !== id));
+        } else {
+            setIncompatibleIds([...incompatibleIds, id]);
+        }
+    };
+
+    // Vacation Handlers
+    const employeeVacations = vacations
+        ? vacations
+            .filter(v => v.employeeId === employee.id)
+            .sort((a, b) => new Date(b.startDate) - new Date(a.startDate))
+        : [];
+
+    // Calculate details
+    // Calculate details
+    const currentYear = new Date().getFullYear();
+    const currentYearStart = startOfYear(new Date());
+    const currentYearEnd = endOfYear(new Date());
+
+    const totalDaysUsed = employeeVacations.reduce((acc, vac) => {
+        const start = parseISO(vac.startDate);
+        const end = parseISO(vac.endDate);
+
+        // Calculate overlap with current year
+        const overlapStart = max([start, currentYearStart]);
+        const overlapEnd = min([end, currentYearEnd]);
+
+        if (overlapStart <= overlapEnd) {
+            const days = differenceInCalendarDays(overlapEnd, overlapStart) + 1;
+            return acc + days;
+        }
+        return acc;
+    }, 0);
+
+    const TOTAL_VACATION_DAYS = 30;
+    const daysRemaining = TOTAL_VACATION_DAYS - totalDaysUsed;
+
+    // Status color
+    let statusColor = 'var(--vacation-approved)'; // Green
+    if (daysRemaining <= 5) statusColor = '#f59e0b'; // Orange
+    if (daysRemaining <= 0) statusColor = '#ef4444'; // Red
+
+    const startEditingVacation = (vacation) => {
+        setEditingVacationId(vacation.id);
+        setEditStartDate(vacation.startDate);
+        setEditEndDate(vacation.endDate);
+    };
+
+    const cancelEditingVacation = () => {
+        setEditingVacationId(null);
+        setEditStartDate('');
+        setEditEndDate('');
+    };
+
+    const saveEditedVacation = (originalVacation) => {
+        if (!editStartDate || !editEndDate) return;
+
+        onSaveVacation({
+            ...originalVacation,
+            startDate: editStartDate,
+            endDate: editEndDate
+        });
+        setEditingVacationId(null);
+    };
+
+
+    return (
+        <div style={{
+            position: 'fixed', inset: 0, backgroundColor: 'rgba(0,0,0,0.5)',
+            display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 100
+        }}>
+            <div className="card" style={{ width: '100%', maxWidth: '600px', maxHeight: '90vh', overflowY: 'auto', display: 'flex', flexDirection: 'column' }}>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.5rem' }}>
+                    <h2 className="title" style={{ fontSize: '1.2rem' }}>Editar Empleado</h2>
+                    <button onClick={onClose} style={{ background: 'none', border: 'none', cursor: 'pointer' }}>
+                        <X size={24} />
+                    </button>
+                </div>
+
+                <div style={{ display: 'flex', gap: '2rem', flexDirection: 'column' }}>
+
+                    {/* LEFT COLUMN: Employee Details */}
+                    <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+                        {/* Basic Info */}
+                        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>
+                            <div>
+                                <label style={{ fontSize: '0.85rem', fontWeight: 500, marginBottom: '4px', display: 'block' }}>Nombre</label>
+                                <input
+                                    className="input-base"
+                                    type="text"
+                                    value={name}
+                                    onChange={e => setName(e.target.value)}
+                                    style={{ width: '100%', padding: '0.75rem', borderRadius: '8px', border: '1px solid var(--border-light)' }}
+                                />
+                            </div>
+
+                            <div>
+                                <label style={{ fontSize: '0.85rem', fontWeight: 500, marginBottom: '4px', display: 'block' }}>Cargo</label>
+                                <select
+                                    value={role}
+                                    onChange={e => setRole(e.target.value)}
+                                    style={{ width: '100%', padding: '0.75rem', borderRadius: '8px', border: '1px solid var(--border-light)' }}
+                                >
+                                    <option value="">Seleccionar cargo...</option>
+                                    <option value="Taller">Taller</option>
+                                    <option value="Administración">Administración</option>
+                                    <option value="Gerencia">Gerencia</option>
+                                    <option value="Diseño">Diseño</option>
+                                </select>
+                            </div>
+
+                            <div>
+                                <label style={{ fontSize: '0.85rem', fontWeight: 500, marginBottom: '4px', display: 'block' }}>PIN de Acceso</label>
+                                <input
+                                    className="input-base"
+                                    type="text"
+                                    maxLength="4"
+                                    placeholder="Ej. 1234"
+                                    value={pin}
+                                    onChange={e => setPin(e.target.value.replace(/\D/g, '').slice(0, 4))}
+                                    style={{ width: '100%', padding: '0.75rem', borderRadius: '8px', border: '1px solid var(--border-light)', letterSpacing: '2px', textAlign: 'center' }}
+                                />
+                            </div>
+                        </div>
+
+                        {/* Incompatibility Section */}
+                        <div style={{ borderTop: '1px solid var(--border-light)', paddingTop: '1rem' }}>
+                            <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '0.5rem', color: '#f59e0b' }}>
+                                <AlertTriangle size={18} />
+                                <span style={{ fontWeight: 600, fontSize: '0.95rem' }}>Restricciones de Solapamiento</span>
+                            </div>
+                            <p style={{ fontSize: '0.85rem', color: 'var(--text-muted)', marginBottom: '1rem' }}>
+                                Selecciona los empleados con los que <strong>{name}</strong> no debería coincidir en vacaciones.
+                            </p>
+
+                            <div style={{ display: 'flex', flexDirection: 'column', gap: '8px', maxHeight: '150px', overflowY: 'auto', border: '1px solid var(--border-light)', borderRadius: '8px', padding: '0.5rem' }}>
+                                {allEmployees
+                                    .filter(e => e.id !== employee.id) // Exclude self
+                                    .map(other => (
+                                        <label key={other.id} style={{ display: 'flex', alignItems: 'center', gap: '10px', fontSize: '0.9rem', cursor: 'pointer', padding: '4px' }}>
+                                            <input
+                                                type="checkbox"
+                                                checked={incompatibleIds.includes(other.id)}
+                                                onChange={() => handleToggleIncompatibility(other.id)}
+                                                style={{ width: '16px', height: '16px' }}
+                                            />
+                                            <span>{other.name}</span>
+                                            {other.role && <span style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}>({other.role})</span>}
+                                        </label>
+                                    ))}
+                                {allEmployees.length <= 1 && <p style={{ fontSize: '0.8rem', color: 'var(--text-muted)' }}>No hay otros empleados.</p>}
+                            </div>
+                        </div>
+
+                        {/* Vacations Section */}
+                        <div style={{ borderTop: '1px solid var(--border-light)', paddingTop: '1rem' }}>
+                            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '1rem' }}>
+                                <div style={{ display: 'flex', alignItems: 'center', gap: '8px', color: 'var(--primary)' }}>
+                                    <Calendar size={18} />
+                                    <span style={{ fontWeight: 600, fontSize: '0.95rem' }}>Vacaciones Asignadas</span>
+                                </div>
+
+                                {/* Vacation Counter */}
+                                <div style={{
+                                    display: 'flex', alignItems: 'center', gap: '12px',
+                                    background: '#f1f5f9', padding: '6px 12px', borderRadius: '20px', fontSize: '0.85rem'
+                                }}>
+                                    <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }} title="Días consumidos">
+                                        <Clock size={16} className="text-muted" />
+                                        <span>Consumidos ({currentYear}): <strong>{totalDaysUsed}</strong></span>
+                                    </div>
+                                    <div style={{ width: '1px', height: '16px', background: '#cbd5e1' }}></div>
+                                    <div style={{ fontWeight: 600, color: statusColor }}>
+                                        Restantes: {daysRemaining}
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div style={{ display: 'flex', flexDirection: 'column', gap: '8px', maxHeight: '200px', overflowY: 'auto', paddingRight: '4px' }}>
+                                {employeeVacations.length === 0 ? (
+                                    <p style={{ fontSize: '0.85rem', color: 'var(--text-muted)', fontStyle: 'italic' }}>No tiene vacaciones asignadas.</p>
+                                ) : (
+                                    employeeVacations.map(vac => {
+                                        const isEditing = editingVacationId === vac.id;
+                                        const vacDays = differenceInCalendarDays(parseISO(vac.endDate), parseISO(vac.startDate)) + 1;
+
+                                        if (isEditing) {
+                                            return (
+                                                <div key={vac.id} style={{ display: 'flex', gap: '8px', alignItems: 'center', background: '#f8fafc', padding: '8px', borderRadius: '6px', border: '1px solid var(--primary)' }}>
+                                                    <input
+                                                        type="date"
+                                                        value={editStartDate}
+                                                        onChange={e => setEditStartDate(e.target.value)}
+                                                        style={{ padding: '4px', borderRadius: '4px', border: '1px solid #ccc', fontSize: '0.8rem' }}
+                                                    />
+                                                    <span>-</span>
+                                                    <input
+                                                        type="date"
+                                                        value={editEndDate}
+                                                        onChange={e => setEditEndDate(e.target.value)}
+                                                        style={{ padding: '4px', borderRadius: '4px', border: '1px solid #ccc', fontSize: '0.8rem' }}
+                                                    />
+                                                    <div style={{ display: 'flex', gap: '4px', marginLeft: 'auto' }}>
+                                                        <button type="button" onClick={() => saveEditedVacation(vac)} style={{ color: 'green', cursor: 'pointer', background: 'none', border: 'none' }} title="Guardar">
+                                                            <Check size={16} />
+                                                        </button>
+                                                        <button type="button" onClick={cancelEditingVacation} style={{ color: 'gray', cursor: 'pointer', background: 'none', border: 'none' }} title="Cancelar">
+                                                            <X size={16} />
+                                                        </button>
+                                                    </div>
+                                                </div>
+                                            );
+                                        }
+
+                                        return (
+                                            <div key={vac.id} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', background: '#f8fafc', padding: '8px', borderRadius: '6px', border: '1px solid var(--border-light)' }}>
+                                                <div style={{ fontSize: '0.9rem', display: 'flex', alignItems: 'center', gap: '8px' }}>
+                                                    <div>
+                                                        <span style={{ fontWeight: 500 }}>{format(parseISO(vac.startDate), 'dd/MM/yyyy')}</span>
+                                                        <span style={{ margin: '0 8px', color: '#94a3b8' }}>➔</span>
+                                                        <span style={{ fontWeight: 500 }}>{format(parseISO(vac.endDate), 'dd/MM/yyyy')}</span>
+                                                    </div>
+                                                    <span style={{ fontSize: '0.75rem', background: '#e2e8f0', padding: '2px 6px', borderRadius: '10px', color: 'var(--text-muted)' }}>
+                                                        {vacDays} días
+                                                    </span>
+                                                </div>
+                                                <div style={{ display: 'flex', gap: '8px' }}>
+                                                    <button type="button" onClick={() => startEditingVacation(vac)} style={{ color: 'var(--text-muted)', cursor: 'pointer', background: 'none', border: 'none' }} title="Editar fechas">
+                                                        <Edit2 size={14} />
+                                                    </button>
+                                                    <button type="button" onClick={() => onDeleteVacation(vac.id)} style={{ color: '#ef4444', cursor: 'pointer', background: 'none', border: 'none' }} title="Eliminar vacaciones">
+                                                        <Trash2 size={14} />
+                                                    </button>
+                                                </div>
+                                            </div>
+                                        );
+                                    })
+                                )}
+                            </div>
+                        </div>
+
+                        <button type="submit" className="btn btn-primary" style={{ marginTop: '1rem', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px' }}>
+                            <Save size={18} />
+                            <span>Guardar Cambios del Empleado</span>
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    );
+}
