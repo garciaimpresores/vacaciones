@@ -288,6 +288,7 @@ function App() {
             onAdd={handleAddEmployee}
             onDelete={handleDeleteEmployee}
             onEdit={setEditingEmployee}
+            onAddVacation={(emp) => handleCellClick(emp.id, new Date())}
             showColors={true}
             selectedIds={selectedEmployeeIds}
             onToggleSelect={handleToggleSelectEmployee}

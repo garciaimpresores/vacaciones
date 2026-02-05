@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { Plus, Trash2 } from 'lucide-react';
 import { getEmployeeColor } from '../utils/colors';
 
-export default function EmployeeManager({ employees, onAdd, onDelete, onEdit, showColors, selectedIds = [], onToggleSelect }) {
+export default function EmployeeManager({ employees, onAdd, onDelete, onEdit, onAddVacation, showColors, selectedIds = [], onToggleSelect }) {
     const [name, setName] = useState('');
     const [role, setRole] = useState('');
 
@@ -104,6 +104,13 @@ export default function EmployeeManager({ employees, onAdd, onDelete, onEdit, sh
                             </div>
 
                             <div style={{ display: 'flex', gap: '4px' }}>
+                                <button
+                                    onClick={() => onAddVacation && onAddVacation(emp)}
+                                    style={{ color: 'var(--primary)', background: 'none', padding: '4px', cursor: 'pointer' }}
+                                    title="Añadir vacación directa"
+                                >
+                                    <Plus size={16} />
+                                </button>
                                 <button
                                     onClick={() => onEdit && onEdit(emp)}
                                     style={{ color: 'var(--text-muted)', background: 'none', padding: '4px', cursor: 'pointer' }}
