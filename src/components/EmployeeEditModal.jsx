@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { X, Save, AlertTriangle, Calendar, Trash2, Edit2, Check, Clock } from 'lucide-react';
-import { format, parseISO, isValid, differenceInCalendarDays, startOfYear, endOfYear, max, min } from 'date-fns';
+import { format, parseISO, isValid, startOfYear, endOfYear, max, min } from 'date-fns';
+import { countWorkingDays, TOTAL_VACATION_DAYS_PER_YEAR } from '../utils/dateUtils';
 
 export default function EmployeeEditModal({ isOpen, onClose, onSave, employee, allEmployees, vacations, onSaveVacation, onDeleteVacation }) {
     const [name, setName] = useState('');
@@ -55,7 +56,6 @@ export default function EmployeeEditModal({ isOpen, onClose, onSave, employee, a
         : [];
 
     // Calculate details
-    // Calculate details
     const currentYear = new Date().getFullYear();
     const currentYearStart = startOfYear(new Date());
     const currentYearEnd = endOfYear(new Date());
@@ -69,18 +69,16 @@ export default function EmployeeEditModal({ isOpen, onClose, onSave, employee, a
         const overlapEnd = min([end, currentYearEnd]);
 
         if (overlapStart <= overlapEnd) {
-            const days = differenceInCalendarDays(overlapEnd, overlapStart) + 1;
-            return acc + days;
+            return acc + countWorkingDays(overlapStart, overlapEnd);
         }
         return acc;
     }, 0);
 
-    const TOTAL_VACATION_DAYS = 30;
-    const daysRemaining = TOTAL_VACATION_DAYS - totalDaysUsed;
+    const daysRemaining = TOTAL_VACATION_DAYS_PER_YEAR - totalDaysUsed;
 
     // Status color
     let statusColor = 'var(--vacation-approved)'; // Green
-    if (daysRemaining <= 5) statusColor = '#f59e0b'; // Orange
+    if (daysRemaining <= 3) statusColor = '#f59e0b'; // Orange
     if (daysRemaining <= 0) statusColor = '#ef4444'; // Red
 
     const startEditingVacation = (vacation) => {
@@ -227,7 +225,7 @@ export default function EmployeeEditModal({ isOpen, onClose, onSave, employee, a
                                 ) : (
                                     employeeVacations.map(vac => {
                                         const isEditing = editingVacationId === vac.id;
-                                        const vacDays = differenceInCalendarDays(parseISO(vac.endDate), parseISO(vac.startDate)) + 1;
+                                        const vacDays = countWorkingDays(parseISO(vac.startDate), parseISO(vac.endDate));
 
                                         if (isEditing) {
                                             return (
@@ -262,8 +260,8 @@ export default function EmployeeEditModal({ isOpen, onClose, onSave, employee, a
                                                     <span style={{ fontWeight: 500 }}>{format(parseISO(vac.startDate), 'dd/MM/yyyy')}</span>
                                                     <span style={{ color: '#94a3b8' }}>➔</span>
                                                     <span style={{ fontWeight: 500 }}>{format(parseISO(vac.endDate), 'dd/MM/yyyy')}</span>
-                                                    <span style={{ fontSize: '0.7rem', background: '#e2e8f0', padding: '2px 6px', borderRadius: '10px', color: 'var(--text-muted)', whiteSpace: 'nowrap' }}>
-                                                        {vacDays} d
+                                                    <span style={{ fontSize: '0.7rem', background: '#e2e8f0', padding: '2px 6px', borderRadius: '10px', color: 'var(--primary)', fontWeight: 600, whiteSpace: 'nowrap' }}>
+                                                        {vacDays} lab.
                                                     </span>
                                                 </div>
                                                 <div style={{ display: 'flex', gap: '10px' }}>

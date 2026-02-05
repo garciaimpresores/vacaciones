@@ -5,6 +5,7 @@ import { es } from 'date-fns/locale';
 import DayDetailsModal from './DayDetailsModal';
 import YearView from './YearView';
 import { isHoliday, getHolidayName } from '../utils/holidays';
+import { countWorkingDays, TOTAL_VACATION_DAYS_PER_YEAR } from '../utils/dateUtils';
 
 export default function EmployeeView({ employee, vacations = [], events = [], onLogout }) { // Added events default
     const [currentDate, setCurrentDate] = useState(new Date());
@@ -33,12 +34,11 @@ export default function EmployeeView({ employee, vacations = [], events = [], on
         const end = parseISO(vac.endDate);
         const overlapStart = max([start, currentYearStart]);
         const overlapEnd = min([end, currentYearEnd]);
-        return (overlapStart <= overlapEnd) ? acc + (differenceInCalendarDays(overlapEnd, overlapStart) + 1) : acc;
+        return (overlapStart <= overlapEnd) ? acc + countWorkingDays(overlapStart, overlapEnd) : acc;
     }, 0);
-    const TOTAL_VACATION_DAYS = 30;
-    const daysRemaining = TOTAL_VACATION_DAYS - totalDaysUsed;
+    const daysRemaining = TOTAL_VACATION_DAYS_PER_YEAR - totalDaysUsed;
     let statusColor = 'var(--vacation-approved)';
-    if (daysRemaining <= 5) statusColor = '#f59e0b';
+    if (daysRemaining <= 3) statusColor = '#f59e0b';
     if (daysRemaining <= 0) statusColor = '#ef4444';
 
     // Handler for Day Click
@@ -174,7 +174,7 @@ export default function EmployeeView({ employee, vacations = [], events = [], on
                         </div>
                         <div>
                             <div style={{ fontSize: '0.8rem', color: 'var(--text-muted)' }}>Días Totales</div>
-                            <div style={{ fontSize: '1.25rem', fontWeight: 700 }}>{TOTAL_VACATION_DAYS}</div>
+                            <div style={{ fontSize: '1.25rem', fontWeight: 700 }}>{TOTAL_VACATION_DAYS_PER_YEAR}</div>
                         </div>
                     </div>
 

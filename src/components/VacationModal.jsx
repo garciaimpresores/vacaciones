@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
-import { X } from 'lucide-react';
-import { format, addDays } from 'date-fns';
+import { X, Clock } from 'lucide-react';
+import { format, addDays, parseISO } from 'date-fns';
+import { countWorkingDays } from '../utils/dateUtils';
 
 export default function VacationModal({ isOpen, onClose, onSave, initialDate, initialEmployeeId, employees }) {
     if (!isOpen) return null;
@@ -11,13 +12,18 @@ export default function VacationModal({ isOpen, onClose, onSave, initialDate, in
 
     useEffect(() => {
         if (initialDate) {
-            setStartDate(format(initialDate, 'yyyy-MM-dd'));
-            setEndDate(format(addDays(initialDate, 7), 'yyyy-MM-dd')); // Default to 1 week
+            const startStr = format(initialDate, 'yyyy-MM-dd');
+            setStartDate(startStr);
+            setEndDate(format(addDays(initialDate, 4), 'yyyy-MM-dd')); // Default to 5 working days roughly
         }
         if (initialEmployeeId) {
             setEmployeeId(initialEmployeeId);
         }
     }, [initialDate, initialEmployeeId]);
+
+    const workingDaysCount = (startDate && endDate)
+        ? countWorkingDays(parseISO(startDate), parseISO(endDate))
+        : 0;
 
     const handleSubmit = (e) => {
         e.preventDefault();
@@ -65,6 +71,23 @@ export default function VacationModal({ isOpen, onClose, onSave, initialDate, in
                                 style={{ width: '100%', padding: '0.5rem', borderRadius: '8px', border: '1px solid var(--border-light)' }}
                             />
                         </div>
+                    </div>
+
+                    <div style={{
+                        background: '#f8fafc',
+                        padding: '0.75rem',
+                        borderRadius: '8px',
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        gap: '8px',
+                        border: '1px solid #e2e8f0',
+                        marginTop: '0.5rem'
+                    }}>
+                        <Clock size={16} style={{ color: 'var(--primary)' }} />
+                        <span style={{ fontSize: '0.9rem', fontWeight: 600 }}>
+                            Días laborables: <span style={{ color: 'var(--primary)', fontSize: '1.1rem' }}>{workingDaysCount}</span>
+                        </span>
                     </div>
 
                     <div style={{ marginTop: '1rem', display: 'flex', justifyContent: 'flex-end', gap: '8px' }}>
