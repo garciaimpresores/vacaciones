@@ -31,8 +31,16 @@ import LoginView from './components/LoginView';
 import EmployeeView from './components/EmployeeView';
 
 function App() {
-  // Auth State
-  const [currentUser, setCurrentUser] = useState(null);
+  // Auth State - Initialize from localStorage if available
+  const [currentUser, setCurrentUser] = useState(() => {
+    const savedUser = localStorage.getItem('vacationApp_user');
+    if (!savedUser) return null;
+    try {
+      return JSON.parse(savedUser);
+    } catch (e) {
+      return savedUser; // Handle 'admin' string or legacy format
+    }
+  });
 
   const [employees, setEmployees] = useState([]);
   const [vacations, setVacations] = useState([]);
@@ -55,6 +63,15 @@ function App() {
 
   // Edit State
   const [editingEmployee, setEditingEmployee] = useState(null);
+
+  // Sync Auth State to localStorage
+  useEffect(() => {
+    if (currentUser) {
+      localStorage.setItem('vacationApp_user', JSON.stringify(currentUser));
+    } else {
+      localStorage.removeItem('vacationApp_user');
+    }
+  }, [currentUser]);
 
   // Load initial data
   useEffect(() => {
