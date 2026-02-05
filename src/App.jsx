@@ -234,7 +234,7 @@ function App() {
           <div style={{ background: 'var(--primary)', color: 'white', padding: '8px', borderRadius: '8px' }}>
             <Calendar size={24} />
           </div>
-          <h1>García Impresores Holly-Gest</h1>
+          <h1>García Impresores Gestor de Vacaciones</h1>
         </div>
 
         <div style={{ display: 'flex', gap: '4px', background: '#f1f5f9', padding: '4px', borderRadius: '8px' }}>
