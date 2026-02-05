@@ -48,7 +48,7 @@ export default function LoginView({ employees, onLogin }) {
             display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center',
             minHeight: '100vh', background: 'linear-gradient(135deg, #f1f5f9 0%, #e2e8f0 100%)', padding: '1rem'
         }}>
-            <div className="card" style={{ width: '100%', maxWidth: '400px', padding: '2rem' }}>
+            <div className="card" style={{ width: '100%', maxWidth: '400px', padding: '2rem 1.5rem' }}>
 
                 {/* Header */}
                 <div style={{ textAlign: 'center', marginBottom: '2rem' }}>

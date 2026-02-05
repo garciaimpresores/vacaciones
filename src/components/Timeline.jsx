@@ -70,18 +70,30 @@ export default function Timeline({
         <div className="card" style={{ padding: '0', overflow: 'hidden', display: 'flex', flexDirection: 'column', height: '100%' }}>
 
             {/* Navigation */}
-            <div style={{ padding: '1rem', display: 'flex', alignItems: 'center', justifyContent: 'space-between', borderBottom: '1px solid var(--border-light)' }}>
-                <h2 className="title" style={{ textTransform: 'capitalize' }}>
+            <div style={{
+                padding: '0.75rem 1rem',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'space-between',
+                borderBottom: '1px solid var(--border-light)',
+                flexWrap: 'wrap',
+                gap: '0.5rem'
+            }}>
+                <h2 className="title" style={{
+                    textTransform: 'capitalize',
+                    fontSize: '1.2rem',
+                    margin: 0
+                }}>
                     {viewMode === 'year'
                         ? format(currentDate, 'yyyy', { locale: es })
                         : format(currentDate, 'MMMM yyyy', { locale: es })
                     }
                 </h2>
                 <div style={{ display: 'flex', gap: '8px' }}>
-                    <button className="btn" style={{ background: 'var(--bg-app)' }} onClick={handlePrev}>
+                    <button className="btn" style={{ background: 'var(--bg-app)', padding: '0.4rem 0.8rem' }} onClick={handlePrev}>
                         <ChevronLeft size={20} />
                     </button>
-                    <button className="btn" style={{ background: 'var(--bg-app)' }} onClick={handleNext}>
+                    <button className="btn" style={{ background: 'var(--bg-app)', padding: '0.4rem 0.8rem' }} onClick={handleNext}>
                         <ChevronRight size={20} />
                     </button>
                 </div>

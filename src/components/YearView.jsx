@@ -68,9 +68,9 @@ export default function YearView({ currentDate, employees, vacations, events, st
 
             <div style={{
                 display: 'grid',
-                gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))',
-                gap: '2rem',
-                padding: '0 1rem 1rem 1rem', // Adjusted padding
+                gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))',
+                gap: '1.5rem',
+                padding: '0 1rem 1rem 1rem',
                 overflowY: 'auto',
                 flex: 1
             }}>

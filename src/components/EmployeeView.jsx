@@ -88,16 +88,21 @@ export default function EmployeeView({ employee, vacations = [], events = [], on
     return (
         <div style={{ minHeight: '100vh', background: '#f8fafc', paddingBottom: '2rem' }}>
             {/* Header */}
-            <header className="app-header" style={{ marginBottom: '2rem' }}>
+            <header className="app-header">
                 <div className="app-header-title">
-                    <div style={{ background: 'var(--primary)', color: 'white', padding: '8px', borderRadius: '8px' }}>
+                    <div style={{ background: 'var(--primary)', color: 'white', padding: '8px', borderRadius: '8px', flexShrink: 0 }}>
                         <Calendar size={24} />
                     </div>
-                    <h1>Portal del Empleado</h1>
+                    <h1 style={{ margin: 0 }}>Portal del Empleado</h1>
                 </div>
 
-                <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
-
+                <div style={{
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: '1rem',
+                    flexWrap: 'wrap',
+                    justifyContent: 'flex-start'
+                }}>
                     {/* Event Visibility Toggle */}
                     <button
                         onClick={() => setShowEvents(!showEvents)}
@@ -106,14 +111,15 @@ export default function EmployeeView({ employee, vacations = [], events = [], on
                             background: showEvents ? '#e0f2fe' : 'transparent',
                             color: showEvents ? '#0284c7' : 'var(--text-muted)',
                             border: showEvents ? '1px solid #7dd3fc' : '1px solid var(--border-light)',
-                            padding: '0.4rem 0.8rem',
-                            fontSize: '0.85rem',
-                            display: 'flex', alignItems: 'center', gap: '6px'
+                            padding: '0.4rem 0.6rem',
+                            fontSize: '0.75rem',
+                            display: 'flex', alignItems: 'center', gap: '6px',
+                            whiteSpace: 'nowrap'
                         }}
                         title={showEvents ? "Ocultar Eventos" : "Mostrar Eventos"}
                     >
                         {showEvents ? <Eye size={16} /> : <EyeOff size={16} />}
-                        {showEvents ? 'Eventos Visibles' : 'Eventos Ocultos'}
+                        <span className="hide-mobile">{showEvents ? 'Eventos Visibles' : 'Eventos Ocultos'}</span>
                     </button>
 
                     <div style={{ display: 'flex', gap: '4px', background: '#f1f5f9', padding: '4px', borderRadius: '8px' }}>
@@ -123,7 +129,7 @@ export default function EmployeeView({ employee, vacations = [], events = [], on
                             style={{
                                 backgroundColor: viewMode === 'month' ? 'white' : 'transparent',
                                 boxShadow: viewMode === 'month' ? '0 1px 2px rgba(0,0,0,0.1)' : 'none',
-                                padding: '0.5rem 1rem', fontSize: '0.9rem'
+                                padding: '0.4rem 0.8rem', fontSize: '0.85rem'
                             }}
                         >
                             Mes
@@ -134,56 +140,65 @@ export default function EmployeeView({ employee, vacations = [], events = [], on
                             style={{
                                 backgroundColor: viewMode === 'year' ? 'white' : 'transparent',
                                 boxShadow: viewMode === 'year' ? '0 1px 2px rgba(0,0,0,0.1)' : 'none',
-                                padding: '0.5rem 1rem', fontSize: '0.9rem'
+                                padding: '0.4rem 0.8rem', fontSize: '0.85rem'
                             }}
                         >
                             Año
                         </button>
                     </div>
 
-                    <div style={{ width: '1px', height: '24px', background: '#cbd5e1' }}></div>
+                    <div className="hide-mobile" style={{ width: '1px', height: '24px', background: '#cbd5e1' }}></div>
 
-                    <div style={{ textAlign: 'right' }}>
-                        <div style={{ fontWeight: 600 }}>{employee.name}</div>
-                        <div style={{ fontSize: '0.8rem', color: 'var(--text-muted)' }}>{employee.role}</div>
+                    <div style={{ textAlign: 'right', minWidth: 'fit-content' }}>
+                        <div style={{ fontWeight: 600, fontSize: '0.9rem' }}>{employee.name}</div>
+                        <div style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }} className="hide-tablet">{employee.role}</div>
                     </div>
-                    <button onClick={onLogout} className="btn" style={{ background: '#FECACA', color: '#DC2626' }}>
-                        <LogOut size={18} /> Salir
+                    <button onClick={onLogout} className="btn" style={{ background: '#FECACA', color: '#DC2626', padding: '0.5rem 0.8rem', fontSize: '0.85rem' }}>
+                        <LogOut size={16} /> <span className="hide-mobile">Salir</span>
                     </button>
                 </div>
             </header>
 
-            <main className="app-container" style={{ maxWidth: '1000px', margin: '0 auto', padding: '0 1rem' }}>
+            <main className="app-container" style={{ maxWidth: '1000px', margin: '0 auto', padding: '1rem' }}>
 
-                {/* (Stats Cards - unchanged) */}
-                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '1rem', marginBottom: '2rem' }}>
-                    <div className="card" style={{ display: 'flex', alignItems: 'center', gap: '1rem', padding: '1.5rem' }}>
-                        <div style={{ padding: '1rem', background: '#eff6ff', borderRadius: '12px', color: 'var(--primary)' }}>
-                            <Clock size={24} />
+                {/* (Stats Cards) */}
+                <div style={{
+                    display: 'grid',
+                    gridTemplateColumns: 'repeat(auto-fit, minmax(180px, 1fr))',
+                    gap: '1rem',
+                    marginBottom: '2rem'
+                }}>
+                    <div className="card" style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', padding: '1rem' }}>
+                        <div style={{ padding: '0.75rem', background: '#eff6ff', borderRadius: '10px', color: 'var(--primary)' }}>
+                            <Clock size={20} />
                         </div>
                         <div>
-                            <div style={{ fontSize: '0.9rem', color: 'var(--text-muted)' }}>Días Totales</div>
-                            <div style={{ fontSize: '1.5rem', fontWeight: 700 }}>{TOTAL_VACATION_DAYS}</div>
+                            <div style={{ fontSize: '0.8rem', color: 'var(--text-muted)' }}>Días Totales</div>
+                            <div style={{ fontSize: '1.25rem', fontWeight: 700 }}>{TOTAL_VACATION_DAYS}</div>
                         </div>
                     </div>
 
-                    <div className="card" style={{ display: 'flex', alignItems: 'center', gap: '1rem', padding: '1.5rem' }}>
-                        <div style={{ padding: '1rem', background: '#ECFDF5', borderRadius: '12px', color: '#059669' }}>
-                            <Calendar size={24} />
+                    <div className="card" style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', padding: '1rem' }}>
+                        <div style={{ padding: '0.75rem', background: '#ECFDF5', borderRadius: '10px', color: '#059669' }}>
+                            <Calendar size={20} />
                         </div>
                         <div>
-                            <div style={{ fontSize: '0.9rem', color: 'var(--text-muted)' }}>Consumidos ({currentYear})</div>
-                            <div style={{ fontSize: '1.5rem', fontWeight: 700 }}>{totalDaysUsed}</div>
+                            <div style={{ fontSize: '0.8rem', color: 'var(--text-muted)' }}>Consumidos ({currentYear})</div>
+                            <div style={{ fontSize: '1.25rem', fontWeight: 700 }}>{totalDaysUsed}</div>
                         </div>
                     </div>
 
-                    <div className="card" style={{ display: 'flex', alignItems: 'center', gap: '1rem', padding: '1.5rem', borderLeft: `4px solid ${statusColor}` }}>
+                    <div className="card" style={{
+                        display: 'flex', alignItems: 'center', gap: '0.75rem', padding: '1rem',
+                        borderLeft: `4px solid ${statusColor}`
+                    }}>
                         <div>
-                            <div style={{ fontSize: '0.9rem', color: 'var(--text-muted)' }}>Restantes</div>
-                            <div style={{ fontSize: '1.5rem', fontWeight: 700, color: statusColor }}>{daysRemaining}</div>
+                            <div style={{ fontSize: '0.8rem', color: 'var(--text-muted)' }}>Restantes</div>
+                            <div style={{ fontSize: '1.25rem', fontWeight: 700, color: statusColor }}>{daysRemaining}</div>
                         </div>
                     </div>
                 </div>
+
 
                 {/* Calendar View */}
                 {viewMode === 'month' ? (
