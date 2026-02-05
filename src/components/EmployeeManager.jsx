@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { Plus, Trash2 } from 'lucide-react';
 import { getEmployeeColor } from '../utils/colors';
 
-export default function EmployeeManager({ employees, onAdd, onDelete, onEdit, onAddVacation, showColors, selectedIds = [], onToggleSelect }) {
+export default function EmployeeManager({ employees, onAdd, onEdit, onAddVacation, showColors, selectedIds = [], onToggleSelect }) {
     const [name, setName] = useState('');
     const [role, setRole] = useState('');
 
@@ -114,17 +114,10 @@ export default function EmployeeManager({ employees, onAdd, onDelete, onEdit, on
                                 <button
                                     onClick={() => onEdit && onEdit(emp)}
                                     style={{ color: 'var(--text-muted)', background: 'none', padding: '4px', cursor: 'pointer' }}
-                                    title="Editar compatibilidad"
+                                    title="Ver ficha / Editar"
                                 >
                                     {/* Pencil Icon inline */}
                                     <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M17 3a2.828 2.828 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5L17 3z"></path></svg>
-                                </button>
-                                <button
-                                    onClick={() => onDelete(emp.id)}
-                                    style={{ color: '#ef4444', background: 'none', padding: '4px', cursor: 'pointer' }}
-                                    title="Eliminar empleado"
-                                >
-                                    <Trash2 size={16} />
                                 </button>
                             </div>
                         </div>

@@ -354,6 +354,7 @@ function App() {
         isOpen={!!editingEmployee}
         onClose={() => setEditingEmployee(null)}
         onSave={handleUpdateEmployee}
+        onDeleteEmployee={handleDeleteEmployee}
         employee={editingEmployee}
         allEmployees={employees}
         vacations={vacations}

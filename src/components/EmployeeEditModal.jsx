@@ -3,7 +3,7 @@ import { X, Save, AlertTriangle, Calendar, Trash2, Edit2, Check, Clock } from 'l
 import { format, parseISO, isValid, startOfYear, endOfYear, max, min } from 'date-fns';
 import { countWorkingDays, TOTAL_VACATION_DAYS_PER_YEAR } from '../utils/dateUtils';
 
-export default function EmployeeEditModal({ isOpen, onClose, onSave, employee, allEmployees, vacations, onSaveVacation, onDeleteVacation }) {
+export default function EmployeeEditModal({ isOpen, onClose, onSave, onDeleteEmployee, employee, allEmployees, vacations, onSaveVacation, onDeleteVacation }) {
     const [name, setName] = useState('');
     const [role, setRole] = useState('');
     const [pin, setPin] = useState('');
@@ -112,7 +112,7 @@ export default function EmployeeEditModal({ isOpen, onClose, onSave, employee, a
         }}>
             <div className="card" style={{ width: '100%', maxWidth: '600px', maxHeight: '90vh', overflowY: 'auto', display: 'flex', flexDirection: 'column' }}>
                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.5rem' }}>
-                    <h2 className="title" style={{ fontSize: '1.2rem' }}>Editar Empleado</h2>
+                    <h2 className="title" style={{ fontSize: '1.2rem' }}>Ficha del Empleado</h2>
                     <button onClick={onClose} style={{ background: 'none', border: 'none', cursor: 'pointer' }}>
                         <X size={24} />
                     </button>
@@ -279,10 +279,39 @@ export default function EmployeeEditModal({ isOpen, onClose, onSave, employee, a
                             </div>
                         </div>
 
-                        <button type="submit" className="btn btn-primary" style={{ marginTop: '0.5rem', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px', padding: '0.8rem' }}>
-                            <Save size={18} />
-                            <span>Guardar Cambios</span>
-                        </button>
+                        {/* Footer Buttons */}
+                        <div style={{ marginTop: '0.5rem', display: 'flex', gap: '8px' }}>
+                            <button
+                                type="button"
+                                onClick={() => {
+                                    if (confirm(`¿Seguro que quieres eliminar a ${employee.name}? Se borrarán todas sus vacaciones.`)) {
+                                        onDeleteEmployee && onDeleteEmployee(employee.id);
+                                        onClose();
+                                    }
+                                }}
+                                style={{
+                                    padding: '0.8rem',
+                                    backgroundColor: '#fee2e2',
+                                    color: '#ef4444',
+                                    border: '1px solid #fecaca',
+                                    borderRadius: '8px',
+                                    cursor: 'pointer',
+                                    display: 'flex',
+                                    alignItems: 'center',
+                                    gap: '8px',
+                                    fontWeight: 500
+                                }}
+                                title="Eliminar empleado definitivamente"
+                            >
+                                <Trash2 size={18} />
+                                <span className="hide-mobile">Eliminar Empleado</span>
+                            </button>
+
+                            <button type="submit" className="btn btn-primary" style={{ flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px', padding: '0.8rem' }}>
+                                <Save size={18} />
+                                <span>Guardar Cambios</span>
+                            </button>
+                        </div>
                     </form>
                 </div>
             </div>
