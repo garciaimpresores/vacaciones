@@ -214,9 +214,14 @@ export default function EmployeeView({ employee, vacations = [], events = [], on
                             </div>
                         </div>
 
-                        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(7, 1fr)', gap: '8px', textAlign: 'center' }}>
+                        <div style={{
+                            display: 'grid',
+                            gridTemplateColumns: 'repeat(7, 1fr)',
+                            gap: '4px',
+                            textAlign: 'center'
+                        }}>
                             {['Lun', 'Mar', 'Mié', 'Jue', 'Vie', 'Sáb', 'Dom'].map(day => (
-                                <div key={day} style={{ fontSize: '0.85rem', fontWeight: 600, color: 'var(--text-muted)', marginBottom: '0.5rem' }}>{day}</div>
+                                <div key={day} style={{ fontSize: '0.75rem', fontWeight: 600, color: 'var(--text-muted)', marginBottom: '0.25rem' }}>{day}</div>
                             ))}
 
                             {/* Empty cells for start of month */}
@@ -255,15 +260,6 @@ export default function EmployeeView({ employee, vacations = [], events = [], on
                                     title = 'Vacaciones';
                                 }
 
-                                // Removed boxShadow logic as per instruction
-
-                                if (isVacation) {
-                                    bgColor = 'var(--vacation-approved)';
-                                    color = 'white';
-                                    border = 'none';
-                                    title = 'Vacaciones';
-                                }
-
                                 if (isEvent) {
                                     if (!isVacation) {
                                         // If only event, show event style
@@ -285,16 +281,20 @@ export default function EmployeeView({ employee, vacations = [], events = [], on
                                         onClick={() => handleDayClick(day)}
                                         title={title}
                                         style={{
-                                            padding: '1rem',
-                                            borderRadius: '8px',
+                                            padding: '0.75rem 0.25rem',
+                                            borderRadius: '6px',
                                             background: bgColor,
                                             border: border,
-                                            // No more ugly box-shadow
                                             color: color,
+                                            fontSize: '0.9rem',
                                             fontWeight: (isVacation || isEvent) ? 600 : 400,
                                             position: 'relative',
                                             cursor: hasInteraction ? 'pointer' : 'default',
-                                            transition: 'transform 0.1s'
+                                            transition: 'transform 0.1s',
+                                            minHeight: '40px',
+                                            display: 'flex',
+                                            alignItems: 'center',
+                                            justifyContent: 'center'
                                         }}>
                                         {format(day, 'd')}
 
