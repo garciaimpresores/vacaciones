@@ -231,27 +231,35 @@ function App() {
     <div className="app-container">
       <header className="app-header">
         <div className="app-header-title">
-          <div style={{ background: 'var(--primary)', color: 'white', padding: '8px', borderRadius: '8px' }}>
+          <div style={{ background: 'var(--primary)', color: 'white', padding: '8px', borderRadius: '8px', flexShrink: 0 }}>
             <Calendar size={24} />
           </div>
-          <h1>García Impresores Gestor de Vacaciones</h1>
+          <h1>García Impresores <span className="hide-mobile">Gestor de Vacaciones</span></h1>
         </div>
 
-        <div style={{ display: 'flex', gap: '4px', background: '#f1f5f9', padding: '4px', borderRadius: '8px' }}>
-          <button onClick={() => setCurrentUser(null)} className="btn" style={{ backgroundColor: '#fee2e2', color: '#ef4444', marginRight: '8px', display: 'flex', alignItems: 'center', gap: '4px' }}>
-            <Users size={16} /> Salir
+        <div style={{
+          display: 'flex',
+          gap: '4px',
+          background: '#f1f5f9',
+          padding: '4px',
+          borderRadius: '8px',
+          flexWrap: 'wrap',
+          justifyContent: 'flex-start'
+        }}>
+          <button onClick={() => setCurrentUser(null)} className="btn" style={{ backgroundColor: '#fee2e2', color: '#ef4444', display: 'flex', alignItems: 'center', gap: '4px', padding: '0.4rem 0.8rem', fontSize: '0.85rem' }}>
+            <Users size={16} /> <span className="hide-mobile">Salir</span>
           </button>
-          <div style={{ width: '1px', background: '#cbd5e1', margin: '4px 8px 4px 0' }}></div>
-          <button onClick={() => setCurrentDate(new Date())} className="btn" style={{ background: 'transparent', color: 'var(--primary)' }}>Hoy</button>
-          <button onClick={() => setViewMode('month')} className="btn" style={{ background: viewMode === 'month' ? 'white' : 'transparent', boxShadow: viewMode === 'month' ? '0 1px 2px rgba(0,0,0,0.1)' : 'none' }}>Mes</button>
-          <button onClick={() => setViewMode('year')} className="btn" style={{ background: viewMode === 'year' ? 'white' : 'transparent', boxShadow: viewMode === 'year' ? '0 1px 2px rgba(0,0,0,0.1)' : 'none' }}>Año</button>
-          <div style={{ width: '1px', background: '#cbd5e1', margin: '4px 0' }}></div>
-          <button onClick={() => import('./utils/exportUtils').then(mod => mod.exportToExcel(employees, vacations))} className="btn" style={{ background: 'transparent', color: '#059669', display: 'flex', alignItems: 'center', gap: '6px' }}>
+          <div className="hide-mobile" style={{ width: '1px', background: '#cbd5e1', margin: '4px 4px' }}></div>
+          <button onClick={() => setCurrentDate(new Date())} className="btn" style={{ background: 'transparent', color: 'var(--primary)', padding: '0.4rem 0.8rem', fontSize: '0.85rem' }}>Hoy</button>
+          <button onClick={() => setViewMode('month')} className="btn" style={{ background: viewMode === 'month' ? 'white' : 'transparent', boxShadow: viewMode === 'month' ? '0 1px 2px rgba(0,0,0,0.1)' : 'none', padding: '0.4rem 0.8rem', fontSize: '0.85rem' }}>Mes</button>
+          <button onClick={() => setViewMode('year')} className="btn" style={{ background: viewMode === 'year' ? 'white' : 'transparent', boxShadow: viewMode === 'year' ? '0 1px 2px rgba(0,0,0,0.1)' : 'none', padding: '0.4rem 0.8rem', fontSize: '0.85rem' }}>Año</button>
+          <div className="hide-tablet" style={{ width: '1px', background: '#cbd5e1', margin: '4px 4px' }}></div>
+          <button onClick={() => import('./utils/exportUtils').then(mod => mod.exportToExcel(employees, vacations))} className="btn hide-tablet" style={{ background: 'transparent', color: '#059669', display: 'flex', alignItems: 'center', gap: '6px', padding: '0.4rem 0.8rem', fontSize: '0.85rem' }}>
             <span>📊</span> Exportar
           </button>
-          <div style={{ width: '1px', background: '#cbd5e1', margin: '4px 0' }}></div>
-          <button onClick={() => setIsEventModalOpen(true)} className="btn" style={{ background: 'transparent', color: '#4f46e5', display: 'flex', alignItems: 'center', gap: '6px' }}>
-            <Flag size={18} /> Eventos
+          <div style={{ width: '1px', background: '#cbd5e1', margin: '4px 4px' }}></div>
+          <button onClick={() => setIsEventModalOpen(true)} className="btn" style={{ background: 'transparent', color: '#4f46e5', display: 'flex', alignItems: 'center', gap: '6px', padding: '0.4rem 0.8rem', fontSize: '0.85rem' }}>
+            <Flag size={18} /> <span className="hide-mobile">Eventos</span>
           </button>
         </div>
       </header>

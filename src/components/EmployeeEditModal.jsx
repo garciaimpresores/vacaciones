@@ -120,12 +120,16 @@ export default function EmployeeEditModal({ isOpen, onClose, onSave, employee, a
                     </button>
                 </div>
 
-                <div style={{ display: 'flex', gap: '2rem', flexDirection: 'column' }}>
+                <div style={{ display: 'flex', gap: '1.5rem', flexDirection: 'column' }}>
 
                     {/* LEFT COLUMN: Employee Details */}
-                    <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+                    <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '1.25rem' }}>
                         {/* Basic Info */}
-                        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>
+                        <div style={{
+                            display: 'grid',
+                            gridTemplateColumns: 'repeat(auto-fit, minmax(140px, 1fr))',
+                            gap: '1rem'
+                        }}>
                             <div>
                                 <label style={{ fontSize: '0.85rem', fontWeight: 500, marginBottom: '4px', display: 'block' }}>Nombre</label>
                                 <input
@@ -133,7 +137,7 @@ export default function EmployeeEditModal({ isOpen, onClose, onSave, employee, a
                                     type="text"
                                     value={name}
                                     onChange={e => setName(e.target.value)}
-                                    style={{ width: '100%', padding: '0.75rem', borderRadius: '8px', border: '1px solid var(--border-light)' }}
+                                    style={{ width: '100%', padding: '0.6rem', borderRadius: '8px', border: '1px solid var(--border-light)' }}
                                 />
                             </div>
 
@@ -142,7 +146,7 @@ export default function EmployeeEditModal({ isOpen, onClose, onSave, employee, a
                                 <select
                                     value={role}
                                     onChange={e => setRole(e.target.value)}
-                                    style={{ width: '100%', padding: '0.75rem', borderRadius: '8px', border: '1px solid var(--border-light)' }}
+                                    style={{ width: '100%', padding: '0.6rem', borderRadius: '8px', border: '1px solid var(--border-light)', backgroundColor: 'white' }}
                                 >
                                     <option value="">Seleccionar cargo...</option>
                                     <option value="Taller">Taller</option>
@@ -153,7 +157,7 @@ export default function EmployeeEditModal({ isOpen, onClose, onSave, employee, a
                             </div>
 
                             <div>
-                                <label style={{ fontSize: '0.85rem', fontWeight: 500, marginBottom: '4px', display: 'block' }}>PIN de Acceso</label>
+                                <label style={{ fontSize: '0.85rem', fontWeight: 500, marginBottom: '4px', display: 'block' }}>PIN</label>
                                 <input
                                     className="input-base"
                                     type="text"
@@ -161,43 +165,41 @@ export default function EmployeeEditModal({ isOpen, onClose, onSave, employee, a
                                     placeholder="Ej. 1234"
                                     value={pin}
                                     onChange={e => setPin(e.target.value.replace(/\D/g, '').slice(0, 4))}
-                                    style={{ width: '100%', padding: '0.75rem', borderRadius: '8px', border: '1px solid var(--border-light)', letterSpacing: '2px', textAlign: 'center' }}
+                                    style={{ width: '100%', padding: '0.6rem', borderRadius: '8px', border: '1px solid var(--border-light)', letterSpacing: '2px', textAlign: 'center' }}
                                 />
                             </div>
                         </div>
 
                         {/* Incompatibility Section */}
-                        <div style={{ borderTop: '1px solid var(--border-light)', paddingTop: '1rem' }}>
+                        <div style={{ borderTop: '1px solid var(--border-light)', paddingTop: '1.25rem' }}>
                             <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '0.5rem', color: '#f59e0b' }}>
                                 <AlertTriangle size={18} />
                                 <span style={{ fontWeight: 600, fontSize: '0.95rem' }}>Restricciones de Solapamiento</span>
                             </div>
-                            <p style={{ fontSize: '0.85rem', color: 'var(--text-muted)', marginBottom: '1rem' }}>
-                                Selecciona los empleados con los que <strong>{name}</strong> no debería coincidir en vacaciones.
+                            <p style={{ fontSize: '0.8rem', color: 'var(--text-muted)', marginBottom: '1rem' }}>
+                                Empleados con los que no debería coincidir.
                             </p>
 
-                            <div style={{ display: 'flex', flexDirection: 'column', gap: '8px', maxHeight: '150px', overflowY: 'auto', border: '1px solid var(--border-light)', borderRadius: '8px', padding: '0.5rem' }}>
+                            <div style={{ display: 'flex', flexDirection: 'column', gap: '8px', maxHeight: '120px', overflowY: 'auto', border: '1px solid var(--border-light)', borderRadius: '8px', padding: '0.5rem' }}>
                                 {allEmployees
                                     .filter(e => e.id !== employee.id) // Exclude self
                                     .map(other => (
-                                        <label key={other.id} style={{ display: 'flex', alignItems: 'center', gap: '10px', fontSize: '0.9rem', cursor: 'pointer', padding: '4px' }}>
+                                        <label key={other.id} style={{ display: 'flex', alignItems: 'center', gap: '10px', fontSize: '0.85rem', cursor: 'pointer', padding: '4px' }}>
                                             <input
                                                 type="checkbox"
                                                 checked={incompatibleIds.includes(other.id)}
                                                 onChange={() => handleToggleIncompatibility(other.id)}
                                                 style={{ width: '16px', height: '16px' }}
                                             />
-                                            <span>{other.name}</span>
-                                            {other.role && <span style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}>({other.role})</span>}
+                                            <span style={{ whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>{other.name}</span>
                                         </label>
                                     ))}
-                                {allEmployees.length <= 1 && <p style={{ fontSize: '0.8rem', color: 'var(--text-muted)' }}>No hay otros empleados.</p>}
                             </div>
                         </div>
 
                         {/* Vacations Section */}
-                        <div style={{ borderTop: '1px solid var(--border-light)', paddingTop: '1rem' }}>
-                            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '1rem' }}>
+                        <div style={{ borderTop: '1px solid var(--border-light)', paddingTop: '1.25rem' }}>
+                            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '1rem', flexWrap: 'wrap', gap: '0.75rem' }}>
                                 <div style={{ display: 'flex', alignItems: 'center', gap: '8px', color: 'var(--primary)' }}>
                                     <Calendar size={18} />
                                     <span style={{ fontWeight: 600, fontSize: '0.95rem' }}>Vacaciones Asignadas</span>
@@ -205,21 +207,21 @@ export default function EmployeeEditModal({ isOpen, onClose, onSave, employee, a
 
                                 {/* Vacation Counter */}
                                 <div style={{
-                                    display: 'flex', alignItems: 'center', gap: '12px',
-                                    background: '#f1f5f9', padding: '6px 12px', borderRadius: '20px', fontSize: '0.85rem'
+                                    display: 'flex', alignItems: 'center', gap: '8px',
+                                    background: '#f1f5f9', padding: '4px 10px', borderRadius: '20px', fontSize: '0.8rem', flexWrap: 'wrap'
                                 }}>
-                                    <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }} title="Días consumidos">
-                                        <Clock size={16} className="text-muted" />
-                                        <span>Consumidos ({currentYear}): <strong>{totalDaysUsed}</strong></span>
+                                    <div style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
+                                        <Clock size={14} className="text-muted" />
+                                        <span>Consumidos: <strong>{totalDaysUsed}</strong></span>
                                     </div>
-                                    <div style={{ width: '1px', height: '16px', background: '#cbd5e1' }}></div>
+                                    <div className="hide-mobile" style={{ width: '1px', height: '14px', background: '#cbd5e1' }}></div>
                                     <div style={{ fontWeight: 600, color: statusColor }}>
                                         Restantes: {daysRemaining}
                                     </div>
                                 </div>
                             </div>
 
-                            <div style={{ display: 'flex', flexDirection: 'column', gap: '8px', maxHeight: '200px', overflowY: 'auto', paddingRight: '4px' }}>
+                            <div style={{ display: 'flex', flexDirection: 'column', gap: '6px', maxHeight: '180px', overflowY: 'auto', paddingRight: '4px' }}>
                                 {employeeVacations.length === 0 ? (
                                     <p style={{ fontSize: '0.85rem', color: 'var(--text-muted)', fontStyle: 'italic' }}>No tiene vacaciones asignadas.</p>
                                 ) : (
@@ -229,26 +231,25 @@ export default function EmployeeEditModal({ isOpen, onClose, onSave, employee, a
 
                                         if (isEditing) {
                                             return (
-                                                <div key={vac.id} style={{ display: 'flex', gap: '8px', alignItems: 'center', background: '#f8fafc', padding: '8px', borderRadius: '6px', border: '1px solid var(--primary)' }}>
+                                                <div key={vac.id} style={{ display: 'flex', gap: '6px', alignItems: 'center', background: '#f8fafc', padding: '6px', borderRadius: '6px', border: '1px solid var(--primary)', flexWrap: 'wrap' }}>
                                                     <input
                                                         type="date"
                                                         value={editStartDate}
                                                         onChange={e => setEditStartDate(e.target.value)}
-                                                        style={{ padding: '4px', borderRadius: '4px', border: '1px solid #ccc', fontSize: '0.8rem' }}
+                                                        style={{ padding: '4px', borderRadius: '4px', border: '1px solid #ccc', fontSize: '0.75rem', flex: 1, minWidth: '100px' }}
                                                     />
-                                                    <span>-</span>
                                                     <input
                                                         type="date"
                                                         value={editEndDate}
                                                         onChange={e => setEditEndDate(e.target.value)}
-                                                        style={{ padding: '4px', borderRadius: '4px', border: '1px solid #ccc', fontSize: '0.8rem' }}
+                                                        style={{ padding: '4px', borderRadius: '4px', border: '1px solid #ccc', fontSize: '0.75rem', flex: 1, minWidth: '100px' }}
                                                     />
                                                     <div style={{ display: 'flex', gap: '4px', marginLeft: 'auto' }}>
-                                                        <button type="button" onClick={() => saveEditedVacation(vac)} style={{ color: 'green', cursor: 'pointer', background: 'none', border: 'none' }} title="Guardar">
-                                                            <Check size={16} />
+                                                        <button type="button" onClick={() => saveEditedVacation(vac)} style={{ color: 'green', cursor: 'pointer', background: 'none', border: 'none' }}>
+                                                            <Check size={18} />
                                                         </button>
-                                                        <button type="button" onClick={cancelEditingVacation} style={{ color: 'gray', cursor: 'pointer', background: 'none', border: 'none' }} title="Cancelar">
-                                                            <X size={16} />
+                                                        <button type="button" onClick={cancelEditingVacation} style={{ color: 'gray', cursor: 'pointer', background: 'none', border: 'none' }}>
+                                                            <X size={18} />
                                                         </button>
                                                     </div>
                                                 </div>
@@ -256,23 +257,21 @@ export default function EmployeeEditModal({ isOpen, onClose, onSave, employee, a
                                         }
 
                                         return (
-                                            <div key={vac.id} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', background: '#f8fafc', padding: '8px', borderRadius: '6px', border: '1px solid var(--border-light)' }}>
-                                                <div style={{ fontSize: '0.9rem', display: 'flex', alignItems: 'center', gap: '8px' }}>
-                                                    <div>
-                                                        <span style={{ fontWeight: 500 }}>{format(parseISO(vac.startDate), 'dd/MM/yyyy')}</span>
-                                                        <span style={{ margin: '0 8px', color: '#94a3b8' }}>➔</span>
-                                                        <span style={{ fontWeight: 500 }}>{format(parseISO(vac.endDate), 'dd/MM/yyyy')}</span>
-                                                    </div>
-                                                    <span style={{ fontSize: '0.75rem', background: '#e2e8f0', padding: '2px 6px', borderRadius: '10px', color: 'var(--text-muted)' }}>
-                                                        {vacDays} días
+                                            <div key={vac.id} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', background: '#f8fafc', padding: '8px', borderRadius: '6px', border: '1px solid var(--border-light)', gap: '0.5rem' }}>
+                                                <div style={{ fontSize: '0.85rem', display: 'flex', alignItems: 'center', gap: '6px', flexWrap: 'wrap' }}>
+                                                    <span style={{ fontWeight: 500 }}>{format(parseISO(vac.startDate), 'dd/MM/yyyy')}</span>
+                                                    <span style={{ color: '#94a3b8' }}>➔</span>
+                                                    <span style={{ fontWeight: 500 }}>{format(parseISO(vac.endDate), 'dd/MM/yyyy')}</span>
+                                                    <span style={{ fontSize: '0.7rem', background: '#e2e8f0', padding: '2px 6px', borderRadius: '10px', color: 'var(--text-muted)', whiteSpace: 'nowrap' }}>
+                                                        {vacDays} d
                                                     </span>
                                                 </div>
-                                                <div style={{ display: 'flex', gap: '8px' }}>
-                                                    <button type="button" onClick={() => startEditingVacation(vac)} style={{ color: 'var(--text-muted)', cursor: 'pointer', background: 'none', border: 'none' }} title="Editar fechas">
-                                                        <Edit2 size={14} />
+                                                <div style={{ display: 'flex', gap: '10px' }}>
+                                                    <button type="button" onClick={() => startEditingVacation(vac)} style={{ color: 'var(--text-muted)', cursor: 'pointer', background: 'none', border: 'none' }}>
+                                                        <Edit2 size={16} />
                                                     </button>
-                                                    <button type="button" onClick={() => onDeleteVacation(vac.id)} style={{ color: '#ef4444', cursor: 'pointer', background: 'none', border: 'none' }} title="Eliminar vacaciones">
-                                                        <Trash2 size={14} />
+                                                    <button type="button" onClick={() => onDeleteVacation(vac.id)} style={{ color: '#ef4444', cursor: 'pointer', background: 'none', border: 'none' }}>
+                                                        <Trash2 size={16} />
                                                     </button>
                                                 </div>
                                             </div>
@@ -282,9 +281,9 @@ export default function EmployeeEditModal({ isOpen, onClose, onSave, employee, a
                             </div>
                         </div>
 
-                        <button type="submit" className="btn btn-primary" style={{ marginTop: '1rem', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px' }}>
+                        <button type="submit" className="btn btn-primary" style={{ marginTop: '0.5rem', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px', padding: '0.8rem' }}>
                             <Save size={18} />
-                            <span>Guardar Cambios del Empleado</span>
+                            <span>Guardar Cambios</span>
                         </button>
                     </form>
                 </div>
